@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PRANK APK SELLER GURU — Digital Storefront</title>
+  <style>
+    :root{--accent:#0b84ff;--muted:#666}
+    body{font-family:Inter,system-ui,Arial;margin:0;background:#f6f8fb;color:#111}
+    header{background:white;padding:1rem 1.25rem;box-shadow:0 2px 6px rgba(20,20,40,0.06);display:flex;align-items:center;justify-content:space-between}
+    .logo{font-weight:700;color:var(--accent)}
+    .container{max-width:1000px;margin:2rem auto;padding:0 1rem}
+    .notice{background:#fff3cd;border:1px solid #ffe8a1;padding:12px;margin-bottom:16px;border-radius:8px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+    .card{background:white;padding:14px;border-radius:10px;box-shadow:0 6px 18px rgba(18,24,40,0.04)}
+    .card h3{margin:0 0 6px 0}
+    .price{font-weight:700;margin-top:8px}
+    .btn{background:var(--accent);color:white;padding:8px 12px;border-radius:8px;border:0;cursor:pointer}
+    .muted{color:var(--muted);font-size:0.95rem}
+    footer{padding:1rem;text-align:center;color:#666}
+    .modal-bg{position:fixed;inset:0;background:rgba(10,10,20,0.45);display:flex;align-items:center;justify-content:center;visibility:hidden;opacity:0;transition:opacity .15s}
+    .modal{background:white;padding:18px;border-radius:12px;max-width:420px;width:92%}
+    .qr{width:220px;height:220px;background:#f4f6fb;display:block;margin:8px auto}
+    .row{display:flex;gap:8px;align-items:center}
+    .input{flex:1;padding:8px;border-radius:8px;border:1px solid #ddd}
+    .close{background:transparent;border:0;color:#666;cursor:pointer}
+    .download-link{display:inline-block;margin-top:8px;color:var(--accent);text-decoration:none;font-weight:600}
+    .status{margin-top:8px;color:#a33;font-size:0.95rem}
+    #confirmation p{margin:6px 0}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">PRANK APK SELLER <span style="color:#222;font-weight:600">GURU</span></div>
+    <nav class="muted">DIGI APKS • Secure checkout</nav>
+  </header>
+
+  <main class="container">
+    <div class="notice">
+      <strong>Important — legal & safety notice:</strong>
+      <div class="muted">⚠️ Warning: Use this app at your own risk. The developers are not responsible for any damage, loss, or unintended consequences that may occur from its use. Use on your own responsibly and comply with platform/store rules and local law.</div>
+    </div>
+
+    <section>
+      <h2>OUR APPS</h2>
+      <p class="muted">"Get the ultimate sound experience in your pocket with our portable Sound Box Phone!" BUY NOW.</p>
+      <div class="grid" id="products"></div>
+    </section>
+
+    <section style="margin-top:18px;">
+      <h2>Your Cart</h2>
+      <div id="cart" class="card muted">Cart is empty</div>
+    </section>
+  </main>
+
+  <div class="modal-bg" id="modal">
+    <div class="modal">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <strong id="modalTitle">Pay</strong>
+        <button class="close" onclick="closeModal()">✕</button>
+      </div>
+
+      <p class="muted" id="instruction">Scan the QR with your UPI app or click the button to open your UPI app.</p>
+
+      <div id="qrContainer">
+        <div id="qrcode" style="width:220px; margin:10px auto;"></div>
+        <a id="downloadQR" class="download-link" href="#" download style="display:none">⬇ Download QR</a>
+      </div>
+
+      <div id="confirmation" style="display:none; text-align:center; margin-top:20px;">
+        <p>✅ Our system will check the payment.</p>
+        <p>If payment is completed, please share Payment screenshot on Telegram  :</p>
+        <a href="https://t.me/prankapksseller" target="_blank" style="color:#0b84ff; font-weight:bold;">@prankapksseller</a>
+      </div>
+
+      <div class="row" id="upiRow" style="margin-top:6px;"> 
+        <input id="upiId" class="input" value="pranksainiapks@fam" placeholder="Enter UPI ID (your receiver)" />
+      </div>
+      <div class="row" id="amountRow" style="margin-top:10px;">
+        <input id="amount" class="input" placeholder="Amount (₹)" />
+        <button class="btn" id="openUpi">paid</button>
+      </div>
+      <p class="muted" id="tipLine" style="margin-top:8px">Tip: AFTER PAYMENT DONE CLICK ON PAY.</p>
+    </div>
+  </div>
+
+  <footer>Made with ❤️ — Template for legal digital sales</footer>
+
+  <script>
+    async function loadScript(url, timeout = 8000) {
+      return new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = url;
+        s.async = true;
+        s.onload = () => resolve(url);
+        s.onerror = () => reject(new Error('Failed to load ' + url));
+        document.head.appendChild(s);
+        if(timeout) setTimeout(()=>reject(new Error('Timeout loading '+url)), timeout);
+      });
+    }
+
+    async function ensureQRCodeLib(){
+      if(window.QRCode) return true;
+      const cdns=[
+        'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js',
+        'https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js',
+        'https://unpkg.com/qrcodejs@1.0.0/qrcode.min.js'
+      ];
+      for(const url of cdns){
+        try{
+          await loadScript(url);
+          if(window.QRCode) return true;
+        }catch(e){console.warn('Could not load',url,e.message)}
+      }
+      return !!window.QRCode;
+    }
+
+    const products = [
+      {id:'soundbox',name:'PHONPE (Sound Box)', price:299,desc:'Includes soundbox + real reply back msg from bank + history'},
+      {id:'gpay',name:'GPay (msg sender)', price:49,desc:'real time transition + history systemsss'},
+      {id:'phonepe',name:'PhonePe (normal)', price:49,desc:'real time transition + history system'},
+      {id:'paytm',name:'Paytm (real sound)', price:49,desc:'real time transition + history system'},
+      {id:'allapps',name:'All Apps Package (bundle)', price:149,desc:'phonpe+gpay+patym+fampay'},
+      {id:'fampay',name:'Fam Pay', price:49,desc:'real time transition + history system'}
+    ];
+
+    const prodEl=document.getElementById('products');
+    products.forEach(p=>{
+      const card=document.createElement('div'); card.className='card';
+      card.innerHTML=`
+        <h3>${p.name}</h3>
+        <div class="muted">${p.desc}</div>
+        <div class='price'>₹${p.price}</div>
+        <div style='margin-top:10px;display:flex;gap:8px'>
+          <button class='btn' onclick="addToCart('${p.id}')">Add to Cart</button>
+          <button class='btn' onclick="buyNow('${p.id}')">Buy Now</button>
+        </div>
+      `;
+      prodEl.appendChild(card);
+    });
+
+    let cart=[];
+    function renderCart(){
+      const cartEl=document.getElementById('cart');
+      if(cart.length===0){cartEl.innerHTML='Cart is empty';return}
+      let html=''; let total=0;
+      cart.forEach(item=>{html+=`<div style="display:flex;justify-content:space-between;margin-bottom:6px"><div>${item.name} × ${item.qty}</div><div>₹${item.qty*item.price}</div></div>`; total+=item.qty*item.price});
+      html+=`<hr style='margin:8px 0'/><div style='display:flex;justify-content:space-between;font-weight:700'><div>Total</div><div>₹${total}</div></div><div style='margin-top:10px'><button class='btn' onclick='checkout()'>Checkout</button></div>`;
+      cartEl.innerHTML=html;
+    }
+
+    function addToCart(id){
+      const p=products.find(x=>x.id===id); if(!p)return;
+      const existing=cart.find(x=>x.id===id);
+      if(existing) existing.qty++; else cart.push({id:p.id,name:p.name,price:p.price,qty:1});
+      renderCart();
+    }
+
+    function buyNow(id){
+      const p=products.find(x=>x.id===id); if(!p)return;
+      openModal(p.price,p.name);
+    }
+
+    function checkout(){
+      if(cart.length===0)return alert('Cart is empty');
+      const total=cart.reduce((s,i)=>s+i.price*i.qty,0);
+      openModal(total,'Cart Payment');
+    }
+
+    const modal=document.getElementById('modal');
+    const upiIdInput=document.getElementById('upiId');
+    const amountInput=document.getElementById('amount');
+    const modalTitle=document.getElementById('modalTitle');
+    const downloadLink=document.getElementById('downloadQR');
+    const qrContainer=document.getElementById('qrContainer');
+    const confirmation=document.getElementById('confirmation');
+    const instruction=document.getElementById('instruction');
+    const upiRow=document.getElementById('upiRow');
+    const amountRow=document.getElementById('amountRow');
+    const tipLine=document.getElementById('tipLine');
+    const defaultUpi='pranksainiapks@fam';
+    let currentPaymentTitle='Payment';
+
+    function openModal(amount,title){
+      currentPaymentTitle=title||'Payment';
+      modalTitle.textContent=currentPaymentTitle+' — Pay ₹'+amount;
+      amountInput.value=amount;
+      upiIdInput.value=defaultUpi;
+      qrContainer.style.display='block';
+      upiRow.style.display='flex';
+      amountRow.style.display='flex';
+      instruction.style.display='block';
+      tipLine.style.display='block';
+      confirmation.style.display='none';
+      generateQR();
+      modal.style.visibility='visible'; modal.style.opacity='1';
+    }
+
+    function closeModal(){modal.style.opacity='0'; setTimeout(()=>modal.style.visibility='hidden',150)}
+
+    async function generateQR(){
+      const upiId=upiIdInput.value.trim();
+      const amount=amountInput.value.trim();
+      const title=currentPaymentTitle||'Payment';
+      if(!upiId||!amount){qrContainer.innerHTML=''; downloadLink.style.display='none'; return;}
+      const upiLink=`upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent('PPrank SPK')}&am=${encodeURIComponent(amount)}&cu=INR`;
+
+      qrContainer.innerHTML='';
+      downloadLink.style.display='none';
+
+      const hasLib=await ensureQRCodeLib().catch(()=>false);
+      const cleanTitle=title.replace(/[^a-z0-9]/gi,'_');
+
+      if(hasLib&&window.QRCode){
+        new QRCode(qrContainer,{text:upiLink,width:220,height:220});
+        setTimeout(()=>{
+          const qrCanvas=qrContainer.querySelector('canvas');
+          if(qrCanvas){
+            const qrDataUrl=qrCanvas.toDataURL('image/png');
+            downloadLink.href=qrDataUrl;
+            downloadLink.download=`PPrankSPK_${cleanTitle}_qr.png`;
+            downloadLink.style.display='inline-block';
+          }
+        },180);
+      } else {
+        const qrUrl='https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl='+encodeURIComponent(upiLink);
+        qrContainer.innerHTML=`<img src="${qrUrl}" width="220" height="220" alt="QR code"/>`;
+        downloadLink.href=qrUrl;
+        downloadLink.download=`PPrankSPK_${cleanTitle}_qr.png`;
+        downloadLink.style.display='inline-block';
+      }
+
+      document.getElementById('openUpi').onclick = () => {
+        // Open UPI app
+        window.location.href = upiLink;
+
+        // Hide QR, inputs, tip, and instruction
+        qrContainer.style.display = 'none';
+        upiRow.style.display = 'none';
+        amountRow.style.display = 'none';
+        instruction.style.display = 'none';
+        tipLine.style.display = 'none';
+
+        // Show confirmation
+        confirmation.style.display = 'block';
+      };
+    }
+
+    let regenTimer=null;
+    function scheduleRegenerate(){
+      if(regenTimer) clearTimeout(regenTimer);
+      regenTimer=setTimeout(()=>{generateQR(); regenTimer=null;},250);
+    }
+
+    upiIdInput.addEventListener('input',scheduleRegenerate);
+    amountInput.addEventListener('input',scheduleRegenerate);
+
+    renderCart();
+  </script>
+</body>
+</html>
