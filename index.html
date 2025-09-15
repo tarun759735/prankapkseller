@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>PRANK APK SELLER GURU — Digital Storefront</title>
+  <title>SOCIAL MEDIA BOOSTER — Digital Storefront</title>
   <style>
     :root{--accent:#0b84ff;--muted:#666}
     body{font-family:Inter,system-ui,Arial;margin:0;background:#f6f8fb;color:#111}
@@ -20,8 +20,27 @@
     footer{padding:1rem;text-align:center;color:#666}
     .modal-bg{position:fixed;inset:0;background:rgba(10,10,20,0.45);display:flex;align-items:center;justify-content:center;visibility:hidden;opacity:0;transition:opacity .15s}
     .modal{background:white;padding:18px;border-radius:12px;max-width:420px;width:92%}
-    .qr{width:220px;height:220px;background:#f4f6fb;display:block;margin:8px auto}
-    .row{display:flex;gap:8px;align-items:center;justify-content:center}
+    #qrContainer {
+  display: flex;
+  justify-content: center;   /* Center horizontally */
+  align-items: center;       /* Center vertically (if taller) */
+  margin: 15px 0;
+  min-height: 240px;         /* Prevent jumping while QR loads */
+}
+#qrContainer canvas, 
+#qrContainer img {
+  margin: 0 auto;            /* Ensure QR stays centered */
+  display: block;
+}
+
+
+.row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-end; /* Pushes Paid button to right */
+  width: 100%;               /* Row takes full width */
+}
     .input{flex:1;padding:8px;border-radius:8px;border:1px solid #ddd}
     .close{background:transparent;border:0;color:#666;cursor:pointer}
     .download-link{display:inline-block;margin-top:8px;color:var(--accent);text-decoration:none;font-weight:600}
@@ -33,19 +52,19 @@
 </head>
 <body>
   <header>
-    <div class="logo">PRANK APK SELLER <span style="color:#222;font-weight:600">GURU</span></div>
-    <nav class="muted">DIGI APKS • Secure checkout</nav>
+    <div class="logo">SOCIAL MEDIA <span style="color:#222;font-weight:600">BOOSTER</span></div>
+    <nav class="muted">Instagram • YouTube • Facebook</nav>
   </header>
 
   <main class="container">
     <div class="notice">
       <strong>Important — legal & safety notice:</strong>
-      <div class="muted">?? Warning: Use this app at your own risk. The developers are not responsible for any damage, loss, or unintended consequences that may occur from its use. Use on your own responsibly and comply with platform/store rules and local law.</div>
+      <div class="muted">?? fill the correct username or link at the moment </div>
     </div>
 
     <section>
-      <h2>OUR APPS</h2>
-      <p class="muted">"Get the ultimate sound experience in your pocket with our portable Sound Box Phone!" BUY NOW.</p>
+      <h2>OUR SERVICES</h2>
+      <p class="muted">Boost your social media presence instantly with our premium services!</p>
       <div class="grid" id="products"></div>
     </section>
 
@@ -65,15 +84,19 @@
       <!-- Dynamic text lines -->
       <div id="qrText"></div>
 
+      <!-- Username / Link input -->
+      <div id="userInputBox" style="margin:10px 0; text-align:center; display:none;">
+        <label for="userInput" style="font-weight:500; display:block; margin-bottom:6px;">Enter Link/username:</label>
+        <input type="text" id="userInput" class="input" placeholder="Paste profile link or username">
+      </div>
+
       <div id="qrContainer">
         <div id="qrcode" style="width:220px; margin:10px auto;"></div>
         <a id="downloadQR" class="download-link" href="#" download style="display:none">? Download QR</a>
       </div>
 
       <div id="confirmation" style="display:none; text-align:center; margin-top:20px;">
-        <p> Our system will check the payment.!</p>
-        <p></p>   <p>If payment is done please send payment screenshot on Telegram :</p>
-        <a href="https://t.me/prankapksseller" target="_blank" style="color:#0b84ff; font-weight:bold;">@prankapksseller</a>
+        <!-- Filled dynamically -->
       </div>
 
       <!-- Paid button row -->
@@ -83,7 +106,7 @@
     </div>
   </div>
 
-  <footer>Made with ?? — Template for legal digital sales</footer>
+  <footer>Made by  — MR TARUN</footer>
 
   <script>
     async function loadScript(url, timeout = 8000) {
@@ -114,13 +137,16 @@
       return !!window.QRCode;
     }
 
+    // Services (instead of APKs)
     const products = [
-      {id:'soundbox',name:'PHONPE (Sound Box)', price:299,desc:'Includes soundbox + real reply back msg from bank + history'},
-      {id:'gpay',name:'GPay (msg sender)', price:49,desc:'real time transition + history systemsss'},
-      {id:'phonepe',name:'PhonePe (normal)', price:49,desc:'real time transition + history system'},
-      {id:'paytm',name:'Paytm (real sound)', price:49,desc:'real time transition + history system'},
-      {id:'allapps',name:'All Apps Package (bundle)', price:149,desc:'phonpe+gpay+patym+fampay'},
-      {id:'fampay',name:'Fam Pay', price:49,desc:'real time transition + history system'}
+      {id:'instafollowers', name:'1k Instagram Followers', price:15, desc:'1k followers instantly'},
+      {id:'insta  followers', name:'10k Instagram Folowers', price:149, desc:'10k followers instantly'},
+	  {id:'fbFollowers', name:'1k Facebook Followers', price:15, desc:'Increase your Facebook followers instantly'},
+      {id:'fbF ollowers', name:'10k Facebook Followers', price:149, desc:'Increase your Facebook followers instantly'},
+      {id:'ytSubscribers', name:'1000 YouTube Subscribers', price:80, desc:'Boost your YouTube channel with real-looking subscribers'},
+	   {id:'yt  Subscribers', name:'YouTube Monitization', price:1199, desc:'monitize chanel in 24hrs with 1k subacribers'},
+      {id:'ytViews', name:'YouTube Views', price:149, desc:'Get 10,000+ YouTube video views fast'},
+      
     ];
 
     const prodEl=document.getElementById('products');
@@ -143,8 +169,18 @@
       const cartEl=document.getElementById('cart');
       if(cart.length===0){cartEl.innerHTML='Cart is empty';return}
       let html=''; let total=0;
-      cart.forEach(item=>{html+=`<div style="display:flex;justify-content:space-between;margin-bottom:6px"><div>${item.name} × ${item.qty}</div><div>?${item.qty*item.price}</div></div>`; total+=item.qty*item.price});
-      html+=`<hr style='margin:8px 0'/><div style='display:flex;justify-content:space-between;font-weight:700'><div>Total</div><div>?${total}</div></div><div style='margin-top:10px'><button class='btn' onclick='checkout()'>Checkout</button></div>`;
+      cart.forEach(item=>{
+        html+=`<div style="display:flex;justify-content:space-between;margin-bottom:6px">
+                 <div>${item.name} × ${item.qty}</div>
+                 <div>?${item.qty*item.price}</div>
+               </div>`;
+        total+=item.qty*item.price
+      });
+      html+=`<hr style='margin:8px 0'/>
+             <div style='display:flex;justify-content:space-between;font-weight:700'>
+               <div>Total</div><div>?${total}</div>
+             </div>
+             <div style='margin-top:10px'><button class='btn' onclick='checkout()'>Checkout</button></div>`;
       cartEl.innerHTML=html;
     }
 
@@ -181,17 +217,16 @@
       currentPaymentTitle = title || 'Payment';
       modalTitle.textContent = currentPaymentTitle + ' — Pay ?' + amount;
 
-      // Dynamic instruction lines
       qrText.innerHTML = `
         Scan the QR code below to pay ?${amount} for ${currentPaymentTitle}.<br>
         After completing the payment, click the Paid button below.
       `;
 
-      // Show QR + Paid button
+      document.getElementById('userInputBox').style.display = 'block';
+      document.getElementById('userInput').value = '';
+
       qrContainer.style.display = 'block';
       paidRow.style.display = 'flex';
-
-      // Hide confirmation initially
       confirmation.style.display = 'none';
 
       generateQR(amount);
@@ -203,7 +238,7 @@
     function closeModal(){modal.style.opacity='0'; setTimeout(()=>modal.style.visibility='hidden',150)}
 
     async function generateQR(amount){
-      const upiLink=`upi://pay?pa=${encodeURIComponent(defaultUpi)}&pn=${encodeURIComponent('PPrank SPK')}&am=${encodeURIComponent(amount)}&cu=INR`;
+      const upiLink=`upi://pay?pa=${encodeURIComponent(defaultUpi)}&pn=${encodeURIComponent('SocialMediaBoost')}&am=${encodeURIComponent(amount)}&cu=INR`;
 
       qrContainer.innerHTML='';
       downloadLink.style.display='none';
@@ -218,7 +253,7 @@
           if(qrCanvas){
             const qrDataUrl=qrCanvas.toDataURL('image/png');
             downloadLink.href=qrDataUrl;
-            downloadLink.download=`PPrankSPK_${cleanTitle}_qr.png`;
+            downloadLink.download=`Boost_${cleanTitle}_qr.png`;
             downloadLink.style.display='inline-block';
           }
         },180);
@@ -226,19 +261,32 @@
         const qrUrl='https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl='+encodeURIComponent(upiLink);
         qrContainer.innerHTML=`<img src="${qrUrl}" width="220" height="220" alt="QR code"/>`;
         downloadLink.href=qrUrl;
-        downloadLink.download=`PPrankSPK_${cleanTitle}_qr.png`;
+        downloadLink.download=`Boost_${cleanTitle}_qr.png`;
         downloadLink.style.display='inline-block';
       }
 
       paidButton.onclick = () => {
+        const userValue = document.getElementById('userInput').value.trim();
+        if(!userValue){
+          alert('?? Please enter your Username or Link before proceeding.');
+          return;
+        }
+
         window.location.href = upiLink;
 
-        // Hide QR after Paid
         qrContainer.style.display = 'none';
         paidRow.style.display = 'none';
         qrText.style.display = 'none';
+        document.getElementById('userInputBox').style.display = 'none';
 
         confirmation.style.display = 'block';
+        confirmation.innerHTML = `
+          <p>? Our system will check the payment.</p>
+          <p><strong>Service:</strong> ${currentPaymentTitle}</p>
+          <p><strong>Username/Link:</strong> ${userValue}</p>
+          <p>SERVICE WILL PROVIDED SOONS:</p>
+          <a href="" target="_blank" style="color:#0b84ff; font-weight:bold;">SSM BOOSTER</a>
+        `;
       };
     }
 
